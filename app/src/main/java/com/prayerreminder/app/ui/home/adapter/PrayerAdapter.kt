@@ -9,7 +9,7 @@ import com.prayerreminder.app.databinding.ItemPrayerBinding
 import com.prayerreminder.app.ui.home.model.Prayer
 
 class PrayerAdapter(
-    private val onToggleChanged: (Prayer, Boolean) -> Unit
+    private val onItemClick: (Prayer) -> Unit
 ) : ListAdapter<Prayer, PrayerAdapter.PrayerViewHolder>(PrayerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrayerViewHolder {
@@ -33,11 +33,8 @@ class PrayerAdapter(
             binding.apply {
                 prayerName.text = prayer.name
                 prayerTime.text = prayer.time
-                prayerDescription.text = prayer.description
-                reminderSwitch.isChecked = prayer.reminderEnabled
-
-                reminderSwitch.setOnCheckedChangeListener { _, isChecked ->
-                    onToggleChanged(prayer.copy(reminderEnabled = isChecked), isChecked)
+                root.setOnClickListener {
+                    onItemClick(prayer)
                 }
             }
         }

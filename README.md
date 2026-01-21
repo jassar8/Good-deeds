@@ -2,6 +2,12 @@
 
 A simple Android app (frontend only) that reminds Muslim users to pray on time based on their location.
 
+## 📱 Download the App (APK)
+
+[✅ **Download app-debug.apk**](https://example.com/download/app-debug.apk)
+
+If the APK doesn't install, enable **"Install Unknown Apps"** on your Android device.
+
 ## Features
 
 - **Main Screen**: Displays current location (dummy) and 5 daily prayer times with toggle switches to enable/disable reminders
@@ -127,20 +133,54 @@ app/build/outputs/apk/debug/app-debug.apk
 - **Target SDK**: 34 (Android 14)
 - **UI Framework**: Material Design 3
 - **Navigation**: Jetpack Navigation Component
-- **Architecture**: Fragment-based with ViewBinding
+- **Architecture**: MVVM with Repository, Room database, Retrofit API client, and Fragment-based UI with ViewBinding
 
-## Notes
+## Backend / Data Layer
 
-- This is a **frontend-only** implementation
-- Prayer times are **hardcoded** (dummy data)
-- Location is **dummy text** (no real location services)
-- No notifications implemented yet
-- Settings are UI placeholders only
+The app now includes a full backend/data layer behind the existing UI:
 
-## Future Enhancements
+- **API configuration**:
+  - Uses a Retrofit client (`PrayerApiService`) pointed at the AlAdhan prayer times API (`https://api.aladhan.com/`).
+  - Base URL is configured in `ApiClientProvider`.
+  - Network responses are mapped into domain models via `PrayerApiMapper`.
+- **Room database**:
+  - `PrayerAppDatabase` defines:
+    - `PrayerTimesEntity` for today’s prayer times.
+    - `ReminderSettingsEntity` for per-prayer reminder toggles and offsets.
+    - `SettingsEntity` for calculation method, theme, and last known location.
+  - DAOs expose both suspend functions and `Flow` streams to drive the UI reactively.
+- **Repository**:
+  - `PrayerRepositoryImpl` coordinates:
+    - Current location (via `LocationProvider` and `GeocodingService`).
+    - API calls and caching in Room.
+    - Reminder settings and app settings.
+    - Next-prayer calculations via `PrayerTimeCalculator`.
+- **ViewModels**:
+  - `HomeViewModel` exposes a `StateFlow<HomeUiState>` with:
+    - Loading/error flags.
+    - City name, today’s prayer times, next-prayer countdown, and reminder settings.
+  - `SettingsViewModel` exposes `StateFlow<AppSettings>` for calculation method and theme.
 
-- Real location services integration
-- Prayer time calculation API integration
-- Notification system for prayer reminders
-- Persistent storage for user preferences
-- Multiple calculation methods support
+## Location and Permissions
+
+- The app uses Google Play Services `FusedLocationProviderClient` via `LocationProvider`.
+- `HomeFragment` requests fine location permission at runtime; when denied, a default fallback location from `LocationDefaults` is used.
+- `GeocodingService` uses Android `Geocoder` on a background dispatcher to resolve a human-readable city name.
+
+## Reminders
+
+- A `ReminderScheduler` interface is defined in the domain layer with a stub implementation `ReminderSchedulerStub` that only logs scheduling calls for now.
+- Real notifications (AlarmManager/WorkManager) can be implemented later by providing a concrete `ReminderScheduler` implementation without changing ViewModels or Repository.
+
+## Testing the Backend
+
+1. **Run the app** on a device or emulator with network connectivity.
+2. **Grant location permission** when prompted on the Home screen.
+3. Verify that:
+   - City name updates from your current or fallback location.
+   - Prayer list times update from the API (and persist between launches via Room).
+   - The header countdown updates every second towards the next prayer.
+   - Toggling a prayer row updates reminder settings and is preserved across restarts.
+4. In Settings:
+   - Toggle the calculation method; this triggers a refresh of cached prayer times.
+   - Change the theme toggle (UI only, but stored in `AppSettings`).

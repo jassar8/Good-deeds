@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Prayer times palette -->
+    <color name="prayer_blue_primary">#0D63C7</color>
+    <color name="prayer_blue_dark">#074A98</color>
+    <color name="prayer_blue_light">#1D7CE0</color>
+    <color name="prayer_green">#00C853</color>
+    <color name="header_subtitle">#E0ECFF</color>
+    <color name="list_divider">#FFE0E0E0</color>
 </resources>

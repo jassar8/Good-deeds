@@ -7,4 +7,16 @@
     <string name="theme">Theme</string>
     <string name="calculation_method">Calculation Method</string>
     <string name="location_permission">Location Permission</string>
+
+    <!-- Arabic prayer times home screen -->
+    <string name="title_prayer_times_palestine">مواقيت فلسطين</string>
+    <string name="hijri_date_sample">2 شعبان 1447</string>
+    <string name="weekday_sample">الأربعاء</string>
+    <string name="gregorian_date_sample">2026-01-21</string>
+    <string name="countdown_asr_sample">المتبقي للعصر 00:36:41</string>
+    <string name="elapsed_dhuhr_sample">مضى على الظهر 02:15:18</string>
+    <string name="location_sample">شقيب السلام</string>
+    <string name="prayer_toast_placeholder">سيتم إضافة التنبيه لاحقاً</string>
+    <string name="action_location">الموقع</string>
+    <string name="action_cloud">سحابة</string>
 </resources>
